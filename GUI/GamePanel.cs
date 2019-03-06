@@ -58,4 +58,9 @@ public class GamePanel : MonoBehaviour {
         AliveSecond = 0;
         aliveMinute = 0;
     }
+
+    public double ReturnAliveTime()
+    {
+        return aliveMinute * 60 + aliveSecond;
+    }
 }

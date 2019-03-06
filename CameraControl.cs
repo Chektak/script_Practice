@@ -51,7 +51,7 @@ public class CameraControl : MonoBehaviour {
             Vector3 position = rotation* new Vector3(0, 0.0f, -distance) + 
                 target.transform.position+ new Vector3(0.0f, 0, 0.0f);
             transform.rotation = rotation;
-            target.transform.eulerAngles = new Vector3(0,rotation.eulerAngles.y,0);
+            target.transform.eulerAngles = new Vector3(rotation.eulerAngles.x,rotation.eulerAngles.y,0);
             transform.position = position;
         }
     }
