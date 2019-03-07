@@ -5,6 +5,11 @@ using UnityEngine.UI;
 
 public class GamePanel : MonoBehaviour {
     public Text Text_aliveTime;
+    public Image Image_Story;
+
+    [Header("라운드, 카운트다운 등의 알림을 표시할 Text")]
+    public Text Text_Notice;
+
     private int aliveMinute=0;
     private float AliveSecond
     {
@@ -23,6 +28,7 @@ public class GamePanel : MonoBehaviour {
         }
     }
     private float aliveSecond = 0;
+    private float countTime = 3;
 
     private void Start()
     {
@@ -40,7 +46,7 @@ public class GamePanel : MonoBehaviour {
     {
         do
         {
-            if (GameManager.isGamePlaying == true)
+            if (GameManager.Instance.isGamePlaying == true)
             {
                 AliveSecond += Time.deltaTime;
                 Text_aliveTime.text = aliveMinute+":"+Mathf.Ceil(AliveSecond).ToString();
@@ -48,7 +54,7 @@ public class GamePanel : MonoBehaviour {
             
             yield return null;
         }
-        while (GameManager.canMainControl == false);
+        while (GameManager.Instance.canMainControl == false);
 
         yield break;
     }
@@ -62,5 +68,24 @@ public class GamePanel : MonoBehaviour {
     public double ReturnAliveTime()
     {
         return aliveMinute * 60 + aliveSecond;
+    }
+    
+    public void CountDown()
+    {
+        StartCoroutine(Count());
+    }
+    IEnumerator Count()
+    {
+        while (countTime > 0)
+        {
+            countTime -= Time.deltaTime;
+            Text_Notice.text = Mathf.Ceil(countTime).ToString();
+
+            yield return null;
+        }
+        Text_Notice.text = "";
+        Image_Story.gameObject.SetActive(false);
+        GameManager.Instance.GameStart();
+        yield break;
     }
 }

@@ -39,8 +39,8 @@ public class CameraControl : MonoBehaviour {
 
             if (distance < 0.5)
                 distance=1;
-            if (distance >= 10)
-                distance = 10;
+            if (distance >= 20)
+                distance = 20;
 
             xPos += Input.GetAxis("Mouse X") * xTurnSpeed * 0.02f;
             yPos -= Input.GetAxis("Mouse Y") * yTurnSpeed * 0.02f;
@@ -51,7 +51,7 @@ public class CameraControl : MonoBehaviour {
             Vector3 position = rotation* new Vector3(0, 0.0f, -distance) + 
                 target.transform.position+ new Vector3(0.0f, 0, 0.0f);
             transform.rotation = rotation;
-            target.transform.eulerAngles = new Vector3(rotation.eulerAngles.x,rotation.eulerAngles.y,0);
+           // target.transform.eulerAngles = new Vector3(rotation.eulerAngles.x,rotation.eulerAngles.y,0);
             transform.position = position;
         }
     }

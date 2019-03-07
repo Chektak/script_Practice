@@ -8,12 +8,13 @@ public class GameManager : MonoBehaviour {
     public Player player;
     public GUIControl mainCanvas;
     public GamePanel gamePanel;
-    [Header("플레이어가 리스폰할 포지션 지정")]
-    public Vector3 playerPos = new Vector3(0,160,0);
 
-    static public bool canMainControl = true;//현재 메인화면인가?
-    static public bool isGamePlaying=false;
-    static public bool IsGamePlaying
+    [Header("플레이어가 스폰될 장소 지정")]
+    public GameObject playerSpawn;
+
+    public bool canMainControl = true;//현재 메인화면인가?
+    public bool isGamePlaying=false;
+    public bool IsGamePlaying
     {
         get
         {
@@ -34,10 +35,28 @@ public class GameManager : MonoBehaviour {
             }
         }
     }
+
+    //싱글턴 패턴 ******************/
+    static public GameManager Instance
+    {
+        get
+        {
+            return instance;
+        }
+    }
+    static public GameManager instance;
     private void Awake()
     {
-        setControl(false);
+        if (instance)
+        {
+            DestroyImmediate(gameObject);
+            return;
+        }
+        instance = this;
+
+        DontDestroyOnLoad(gameObject);
     }
+    //**************************************//
 
     private void Update()
     {
@@ -60,7 +79,6 @@ public class GameManager : MonoBehaviour {
         IsGamePlaying = true;
         setControl(true);
         mainCanvas.ChangePanel(0, false);//메인화면 UI 안보이게
-        mainCanvas.ChangePanel(4, true);//게임패널 온
         gamePanel.ScoreStart();
         canMainControl = false;
     }
@@ -92,7 +110,7 @@ public class GameManager : MonoBehaviour {
         IsGamePlaying = true;
         setControl(true);
         gamePanel.ScoreReset();
-        player.transform.position = playerPos;
+        player.transform.position = playerSpawn.transform.position+new Vector3(0, 8, 0);
     }
 
     /// <summary>
@@ -103,7 +121,7 @@ public class GameManager : MonoBehaviour {
         IsGamePlaying = false;
         setControl(false);
         gamePanel.ScoreReset();
-        player.transform.position = playerPos;
+        player.transform.position = playerSpawn.transform.position + new Vector3(0, 8, 0);
         mainCanvas.ChangePanel(0, true);
         mainCanvas.ChangePanel(4, false);
         canMainControl = true;
