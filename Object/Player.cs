@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -95,6 +95,7 @@ public class Player : MonoBehaviour {
             dashCoolTime -= Time.deltaTime;
             yield return null;
         }
+        dashCoolTime=maxdashCoolTimeLimit;
         canDash = true;
         yield break;
     }
