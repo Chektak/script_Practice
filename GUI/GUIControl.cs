@@ -6,6 +6,8 @@ using UnityEngine.UI;
 public class GUIControl : MonoBehaviour {
     [Header("0:메인화면 1:옵션 2:크레딧 3:일시정지 화면")]
     public GameObject[] panels;
+
+    [SerializeField]
     private int nowOpenPanel = 0;
     private int NowOpenPanel
     {
@@ -28,8 +30,9 @@ public class GUIControl : MonoBehaviour {
     /// <param name="setBool"></param>
     public void ChangePanel (int number, bool setBool) {
         panels[number].SetActive(setBool);
-        if (setBool == true)
+        if (setBool == true) { 
             NowOpenPanel = number;//패널을 열고있다면 열고있는 패널로 간주
+        }
 	}
 
     public void PanelGoBack()

@@ -12,8 +12,11 @@ public class GameManager : MonoBehaviour {
     [Header("플레이어가 스폰될 장소 지정")]
     public GameObject playerSpawn;
 
-    public bool canMainControl = true;//현재 메인화면인가?
-    public bool isGamePlaying=false;
+    [Header("1라운드마다 하나씩 자연재해")]
+    public ICalamity[] calamitys;
+
+    public int nowRound = 1;
+    public bool isMainScreen = true;//현재 메인화면인가?
     public bool IsGamePlaying
     {
         get
@@ -35,8 +38,11 @@ public class GameManager : MonoBehaviour {
             }
         }
     }
+    private bool isGamePlaying = false;
 
-    //싱글턴 패턴 ******************/
+    
+
+    //싱글턴 패턴 ******************************************/
     static public GameManager Instance
     {
         get
@@ -56,31 +62,42 @@ public class GameManager : MonoBehaviour {
 
         DontDestroyOnLoad(gameObject);
     }
-    //**************************************//
+    //게임 플레이할때 이벤트들******************************//
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape) && isGamePlaying == true)
+        if (Input.GetKeyDown(KeyCode.Escape) && isGamePlaying == true && gamePanel.panel_gameOver.activeSelf==false)
         {
+            {
+                IsGamePlaying = false;
+                setControl(false);
+            }
             mainCanvas.ChangePanel(3, true);
-            IsGamePlaying = false;
-            setControl(false);
         }
-        else if (Input.GetKeyDown(KeyCode.Escape) && isGamePlaying == false && canMainControl == false)
+        else if (Input.GetKeyDown(KeyCode.Escape) && isGamePlaying == false && mainCanvas.panels[3].activeSelf==true)
         {
+            {
+                IsGamePlaying = true;
+                setControl(true);
+            }
             mainCanvas.ChangePanel(3, false);
-            IsGamePlaying = true;
-            setControl(true);
         }
     }
 
+    /// <summary>
+    /// 함수 실행 순서 : 메인화면에서 GameStart버튼 클릭->gamePanel.CountDown->GameManager.GameStart()->gamePanel.ScoreStart();
+    /// </summary>
     public void GameStart()
     {
-        IsGamePlaying = true;
-        setControl(true);
+        {
+            IsGamePlaying = true;
+            setControl(true);
+            player.Hp = player.maxHpLimit;
+        }
         mainCanvas.ChangePanel(0, false);//메인화면 UI 안보이게
+        isMainScreen = false;
+        SetRoundJump(1);//1라운드로 설정
         gamePanel.ScoreStart();
-        canMainControl = false;
     }
 
     /// <summary>
@@ -92,6 +109,32 @@ public class GameManager : MonoBehaviour {
         mainCamera.enabled = setControl;
         player.enabled = setControl;
     }
+
+    /// <summary>
+    /// 해당 라운드로 이동한다. 1라운드로 이동하려면 인잣값으로 1을 넣으면 동작한다.
+    /// </summary>
+    /// <param name="round"></param>
+    public void SetRoundJump(int round)
+    {
+        nowRound = round;
+        gamePanel.ChangeNoticeText("Round " + round, 2f);
+        if (round -1 == -1)
+            gamePanel.ChangeNoticeText("(Easter Egg) 엔딩 2-타임패러독스" + round, 5f);
+        else
+            calamitys[round-1].CalamityStart();
+    }
+
+    public void GameOver()
+    {
+        {//플레이어가 죽었을때만 쓸 수 있는 능력이 있기 때문에 플레이어 스크립트를 비활성화하지 않는다.
+            IsGamePlaying = false;
+            mainCamera.enabled = false;
+            player.isAlive = false;
+            player.canMove = false;
+        }
+        gamePanel.panel_gameOver.SetActive(true);
+    }
+    //UI버튼 이벤트들**************************************************************************************
 
     /// <summary>
     /// 게임을 다시 진행시킨다.
@@ -107,9 +150,20 @@ public class GameManager : MonoBehaviour {
     /// </summary>
     public void GameReStart()
     {
-        IsGamePlaying = true;
-        setControl(true);
-        gamePanel.ScoreReset();
+        {//이미 발생한 자연재해들을 해제
+            for (int i = 1; i < nowRound; i++)
+            {
+                calamitys[i].CalamityRelese();
+            }
+            nowRound = 1;
+        }
+        {//메인화면에서 처음 시작하는 느낌을 주도록 구현
+            gamePanel.ScoreReset();
+            IsGamePlaying = false;
+            Time.timeScale = 1;
+            setControl(false);
+            gamePanel.CountDown();
+        }
         player.transform.position = playerSpawn.transform.position+new Vector3(0, 8, 0);
     }
 
@@ -124,7 +178,7 @@ public class GameManager : MonoBehaviour {
         player.transform.position = playerSpawn.transform.position + new Vector3(0, 8, 0);
         mainCanvas.ChangePanel(0, true);
         mainCanvas.ChangePanel(4, false);
-        canMainControl = true;
+        isMainScreen = true;
     }
 
     /// <summary>
