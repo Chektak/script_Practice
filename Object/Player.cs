@@ -5,7 +5,11 @@ using UnityEngine;
 public class Player : MonoBehaviour {
     public float speed = 30f;
     public float jumpForce = 100;
-    public IBuff[] buffs;
+    [HideInInspector]
+    public IBuff[] deBuff;
+    [HideInInspector]
+    public IBuff[] gainAbility;//얻은 능력
+
     public int maxHpLimit = 100;
     public int Hp
     {
@@ -21,36 +25,39 @@ public class Player : MonoBehaviour {
                 hp = maxHpLimit;
             else if (hp < 0)
             {
-                isAlive = false;
                 GameManager.instance.GameOver();
             }
         }
     }
-    private int hp=100;
+    [HideInInspector]
+    public int hp=100;
 
-    public float maxDashCoolTimeLimit = 0.5f;
-    public float DashCoolTime
+    public float dashTime = 0.2f;
+    public float dashSpeed = 4f;
+    public float maxDashCoolTimeLimit = 1f;
+    public float NowDashCoolTime
     {
         get
         {
-            return dashCoolTime;
+            return nowDashCoolTime;
         }
         set
         {
-            dashCoolTime = value;
-            GameManager.Instance.gamePanel.CoolBarUpdate(dashCoolTime);
-            if (dashCoolTime > maxDashCoolTimeLimit)
-                dashCoolTime = maxDashCoolTimeLimit;
+            nowDashCoolTime = value;
+            
+            if (nowDashCoolTime > maxDashCoolTimeLimit)
+                nowDashCoolTime = maxDashCoolTimeLimit;
         }
     }
-    public float dashCoolTime = 0.5f;
+    [HideInInspector]
+    public float nowDashCoolTime = 1f;
+    [HideInInspector]
+    public bool canMove = true;
+    [HideInInspector]
+    public bool canDash = true;
+
     float zAxisforce = 0;
     float xAxisforce = 0;
-
-    public bool isAlive = true;
-    public bool canMove = true;
-    bool canDash = true;
-
     private void Start()
     {
         GameManager.Instance.gamePanel.HpBarUpdate(hp);
@@ -66,7 +73,10 @@ public class Player : MonoBehaviour {
         xAxisforce= Input.GetAxis("Horizontal");
 
         if (Input.GetKeyUp(KeyCode.LeftShift) && canDash == true)
+        {
+            canDash = false;
             StartCoroutine(Dash());
+        }
         if (Input.GetKeyDown(KeyCode.Space))
         {
             GetComponent<Rigidbody>().AddForce(new Vector3(0, jumpForce, 0));
@@ -81,22 +91,23 @@ public class Player : MonoBehaviour {
 
     IEnumerator Dash()
     {
-        canDash = false;
-        const float dashTime = 0.2f;//0.2초에 걸쳐 이동
-        
-        float nowDashTime = 0;//현재 이동하고있는 시간
-        while (nowDashTime<dashTime) {
-            nowDashTime += Time.deltaTime;
-            yield return null;
-            transform.Translate(Vector3.forward * 4f);
-            }
-        while (dashCoolTime < 0)
+        float nowDashTime = dashTime;
+        while (NowDashCoolTime > 0)
         {
-            dashCoolTime -= Time.deltaTime;
+            GameManager.Instance.gamePanel.CoolBarUpdate(nowDashCoolTime);
+            if (nowDashTime > 0)
+            {
+                nowDashTime -= Time.deltaTime;
+                transform.Translate(Vector3.forward * dashSpeed);
+            }
+            NowDashCoolTime -= Time.deltaTime;
+            Debug.Log(NowDashCoolTime);
             yield return null;
         }
-        dashCoolTime=maxdashCoolTimeLimit;
+        NowDashCoolTime = maxDashCoolTimeLimit;
         canDash = true;
+        
         yield break;
     }
+    
 }

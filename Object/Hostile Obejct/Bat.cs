@@ -20,10 +20,10 @@ public class Bat : MonoBehaviour {
     private void OnEnable()
     {
         //현재 오브젝트를 랜덤한 위치로 이동시킨다.
-        float RandomPos_x = Random.Range(x_MinMeteorReach, x_ManMeteorReach);
-        float RandomPos_z = Random.Range(z_MinMeteorReach, z_MaxMeteorReach);
+        float RandomPos_x = Random.Range(x_MinSpownReach, x_MaxSpowmReach);
+        float RandomPos_z = Random.Range(z_MinSpownReach, z_MaxSpownReach);
 
-        Pos_meteorStarting = new Vector3(RandomPos_x, y_MeteorPos, RandomPos_z);
+        Pos_meteorStarting = new Vector3(RandomPos_x, y_SpownPos, RandomPos_z);
         transform.position = Pos_meteorStarting;
     }
 
@@ -34,22 +34,4 @@ public class Bat : MonoBehaviour {
 
 	}
 
-    private void OnCollisionEnter(Collision other)
-    {
-        if (other.gameObject.tag == "Ground")
-        {
-            StartCoroutine(ResetPosition(resetTime));
-        }
-    }
-
-    IEnumerator ResetPosition(float time)
-    {
-        while (time > 0)
-        {
-            time -= Time.deltaTime;
-            yield return null;
-        }
-        OnEnable();
-        yield break;
-    }
 }

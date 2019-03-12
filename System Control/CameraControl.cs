@@ -16,6 +16,11 @@ public class CameraControl : MonoBehaviour {
     public float yPosMinLimit = -80f;
     public float yPosMaxLimit = 80f;
 
+    [Header("카메라 진동 이벤트")]
+    public float shakeTime = 2.0f;
+    public float shakeAmount = 3.0f;
+    public float shakeSpeed = 2.0f;
+
     float ClampAngle(float angle, float min, float max)
     {
         if (angle < -360)
@@ -68,5 +73,23 @@ public class CameraControl : MonoBehaviour {
     public void ChangeYAxisSensitivity(Slider slider)
     {
         yTurnSpeed = 440 * slider.value;
+    }
+
+    public void Shake()
+    {
+        StartCoroutine(ShakeCamera());
+    }
+
+    IEnumerator ShakeCamera()
+    {
+        while (shakeTime<0)
+        {
+            Vector3 randomPos = transform.position + Random.insideUnitSphere * shakeAmount;
+            //Random.insideUnitSphere : 반경 1을 갖는 구 안의 임의의 지점을 반환한다.
+            transform.position = Vector3.Lerp(transform.position, randomPos, Time.deltaTime * shakeSpeed);
+            shakeTime -= Time.deltaTime;
+            yield return null;
+        }
+        yield break;
     }
 }

@@ -9,10 +9,10 @@ public class GameManager : MonoBehaviour {
     public GUIControl mainCanvas;
     public GamePanel gamePanel;
 
-    [Header("플레이어가 스폰될 장소 지정")]
+    [Header("-플레이어가 스폰될 장소 지정")]
     public GameObject playerSpawn;
 
-    [Header("1라운드마다 하나씩 자연재해")]
+    [Header("-1라운드마다 하나씩 자연재해")]
     public ICalamity[] calamitys;
 
     public int nowRound = 1;
@@ -108,6 +108,7 @@ public class GameManager : MonoBehaviour {
     {
         mainCamera.enabled = setControl;
         player.enabled = setControl;
+        player.canMove = setControl;
     }
 
     /// <summary>
@@ -129,7 +130,6 @@ public class GameManager : MonoBehaviour {
         {//플레이어가 죽었을때만 쓸 수 있는 능력이 있기 때문에 플레이어 스크립트를 비활성화하지 않는다.
             IsGamePlaying = false;
             mainCamera.enabled = false;
-            player.isAlive = false;
             player.canMove = false;
         }
         gamePanel.panel_gameOver.SetActive(true);
@@ -172,9 +172,9 @@ public class GameManager : MonoBehaviour {
     /// </summary>
     public void GameQuit()
     {
+        gamePanel.ScoreReset();
         IsGamePlaying = false;
         setControl(false);
-        gamePanel.ScoreReset();
         player.transform.position = playerSpawn.transform.position + new Vector3(0, 8, 0);
         mainCanvas.ChangePanel(0, true);
         mainCanvas.ChangePanel(4, false);

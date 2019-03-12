@@ -23,6 +23,8 @@ public class GamePanel : MonoBehaviour {
     {
         ScoreReset();
         text_aliveTime.text = aliveMinute + ":" + aliveSecond;
+        slider_HpBar.maxValue = GameManager.Instance.player.maxHpLimit;
+        slider_DashCoolTimeBar.maxValue = GameManager.Instance.player.maxDashCoolTimeLimit;
     }
 
     public void ScoreReset()
@@ -123,8 +125,8 @@ public class GamePanel : MonoBehaviour {
     /// <param name="cooltime"></param>
     public void CoolBarUpdate(float cooltime)
     {
+        
         slider_DashCoolTimeBar.value = cooltime;
-
     }
     
 }
