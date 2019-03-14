@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -72,6 +72,7 @@ public class GameManager : MonoBehaviour {
                 IsGamePlaying = false;
                 setControl(false);
             }
+            mainCanvas.NowOpenPanel = 3;
             mainCanvas.ChangePanel(3, true);
         }
         else if (Input.GetKeyDown(KeyCode.Escape) && isGamePlaying == false && mainCanvas.panels[3].activeSelf==true)
@@ -92,6 +93,7 @@ public class GameManager : MonoBehaviour {
         {
             IsGamePlaying = true;
             setControl(true);
+            player.isDie = false;
             player.Hp = player.maxHpLimit;
         }
         mainCanvas.ChangePanel(0, false);//메인화면 UI 안보이게
@@ -108,7 +110,6 @@ public class GameManager : MonoBehaviour {
     {
         mainCamera.enabled = setControl;
         player.enabled = setControl;
-        player.canMove = setControl;
     }
 
     /// <summary>
@@ -130,7 +131,6 @@ public class GameManager : MonoBehaviour {
         {//플레이어가 죽었을때만 쓸 수 있는 능력이 있기 때문에 플레이어 스크립트를 비활성화하지 않는다.
             IsGamePlaying = false;
             mainCamera.enabled = false;
-            player.canMove = false;
         }
         gamePanel.panel_gameOver.SetActive(true);
     }

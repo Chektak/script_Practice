@@ -9,7 +9,7 @@ public class GUIControl : MonoBehaviour {
 
     [SerializeField]
     private int nowOpenPanel = 0;
-    private int NowOpenPanel
+    public int NowOpenPanel
     {
         get
         {

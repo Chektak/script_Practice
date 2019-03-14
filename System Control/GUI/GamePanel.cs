@@ -7,7 +7,8 @@ public class GamePanel : MonoBehaviour {
     public Text text_aliveTime;
     public Image image_Story;
     public GameObject panel_gameOver;
-    
+    public GameObject panel_Hitting;
+    public GameObject panel_Healing;
     [Header("라운드, 카운트다운 등의 알림을 표시할 Text")]
     public Text text_Notice;
     [Header("체력과 대쉬기능의 쿨타임을 표시하는 슬라이더")]

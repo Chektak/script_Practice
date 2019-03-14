@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -17,7 +17,8 @@ public class Meteor : MonoBehaviour {
     [Header("운석이 어느 높이에서 떨어질 것인가?")]
     public float y_MeteorPos = 360;
     public float speed = 40f;
-    public float resetTime = 5f;
+    public float minResetTimeLimit = 3.5f;
+    public float maxResetTimeLimit = 6.5f;
     private Vector3 Pos_meteorStarting;
     private float posY_Control;
 
@@ -42,7 +43,26 @@ public class Meteor : MonoBehaviour {
     {
         if (other.gameObject.tag == "Ground")
         {
-            StartCoroutine(ResetPosition(resetTime));
+            StartCoroutine(ResetPosition(Random.Range(minResetTimeLimit, maxResetTimeLimit)));
+
+            //운석주변에 플레이어가 있을 시 카메라 진동을 구현
+            float playerPosX = Mathf.Abs(GameManager.Instance.player.transform.position.x);
+            float playerPosY = Mathf.Abs(GameManager.Instance.player.transform.position.y);
+            float playerPosZ = Mathf.Abs(GameManager.Instance.player.transform.position.z);
+
+            float thisPosX = Mathf.Abs(transform.position.x);
+            float thisPosY = Mathf.Abs(transform.position.y);
+            float thisPosZ = Mathf.Abs(transform.position.z);
+
+            float thisScaleXYZSquare = transform.localScale.x * transform.localScale.x + transform.localScale.y * transform.localScale.y
+                        + transform.localScale.z * transform.localScale.z;
+
+            if ((thisPosX + thisPosY + thisPosZ) - (playerPosX + playerPosY + playerPosZ)
+            <= thisScaleXYZSquare * thisScaleXYZSquare / 9)
+            {
+                
+                GameManager.Instance.mainCamera.Shake();
+            }
         }
     }
 

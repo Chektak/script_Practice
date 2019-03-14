@@ -19,12 +19,19 @@ public class Player : MonoBehaviour {
         }
         set
         {
+            if (isDie == true)//이미 죽어있다면 체력을 계산하지 않는다.
+                return;
+            if (hp > value)
+                GameManager.Instance.mainCamera.Hitting();//체력이 줄어들면 화면이 빨개진다.
+            if (hp < value)
+                GameManager.Instance.mainCamera.Healing();//체력이 늘어나면 화면이 초록색으로 된다.
             hp = value;
             GameManager.Instance.gamePanel.HpBarUpdate(hp);
             if (hp > maxHpLimit)
                 hp = maxHpLimit;
             else if (hp < 0)
             {
+                isDie = true;
                 GameManager.instance.GameOver();
             }
         }
@@ -44,7 +51,7 @@ public class Player : MonoBehaviour {
         set
         {
             nowDashCoolTime = value;
-            
+            GameManager.Instance.gamePanel.CoolBarUpdate(nowDashCoolTime);
             if (nowDashCoolTime > maxDashCoolTimeLimit)
                 nowDashCoolTime = maxDashCoolTimeLimit;
         }
@@ -52,7 +59,7 @@ public class Player : MonoBehaviour {
     [HideInInspector]
     public float nowDashCoolTime = 1f;
     [HideInInspector]
-    public bool canMove = true;
+    public bool isDie=false;
     [HideInInspector]
     public bool canDash = true;
 
@@ -63,8 +70,8 @@ public class Player : MonoBehaviour {
         GameManager.Instance.gamePanel.HpBarUpdate(hp);
     }
     // Update is called once per frame
-    void Update () {
-        if (canMove == false)
+    void FixedUpdate () {
+        if (isDie == true)
             return;
         zAxisforce = 0;
         xAxisforce = 0;
@@ -94,14 +101,13 @@ public class Player : MonoBehaviour {
         float nowDashTime = dashTime;
         while (NowDashCoolTime > 0)
         {
-            GameManager.Instance.gamePanel.CoolBarUpdate(nowDashCoolTime);
+            
             if (nowDashTime > 0)
             {
                 nowDashTime -= Time.deltaTime;
                 transform.Translate(Vector3.forward * dashSpeed);
             }
             NowDashCoolTime -= Time.deltaTime;
-            Debug.Log(NowDashCoolTime);
             yield return null;
         }
         NowDashCoolTime = maxDashCoolTimeLimit;

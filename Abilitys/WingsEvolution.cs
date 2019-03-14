@@ -1,9 +1,9 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class WingsEvolution : IAbility {
-    //´É·Â ¿ÀÇÁ´Â ½ºÅ©¸³Æ® enable false·Î ´ëÃ¼ÇÑ´Ù.
+    //ëŠ¥ë ¥ ì˜¤í”„ëŠ” ìŠ¤í¬ë¦½íŠ¸ enable falseë¡œ ëŒ€ì²´í•œë‹¤..
     public override void AbilityOn()
     {
         GameManager.Instance.player.maxDashCoolTimeLimit /= 2;
