@@ -40,10 +40,10 @@ public class Tsunami_RunningWater : MonoBehaviour {
         while (duration > 0)
         {
             duration -= Time.deltaTime;
-            GameManager.Instance.player.NowDashCoolTime = 0.1f;
+            GameManager.Instance.player.nowdashCoolTime = 0.1f;
             yield return null;
         }
-        GameManager.Instance.player.NowDashCoolTime = GameManager.Instance.player.maxDashCoolTimeLimit;
+        GameManager.Instance.player.nowdashCoolTime = GameManager.Instance.player.maxDashCoolTimeLimit;
         canControlPlayerDash = true;
         yield break;
     }

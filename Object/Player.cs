@@ -38,7 +38,8 @@ public class Player : MonoBehaviour {
     }
     [HideInInspector]
     public int hp=100;
-
+    public float maxDashCoolTimeLimit = 0.2f;
+    public float nowdashCoolTime = 0.2f;
     public float dashDuration = 0.2f;
     public float dashSpeed = 4f;
     public float energyRecoverySpeed = 1;//기력 재생 빠르기
@@ -92,7 +93,7 @@ public class Player : MonoBehaviour {
             transform.rotation = GameManager.Instance.mainCamera.transform.rotation;
         transform.Translate(new Vector3(xAxisforce, 0, zAxisforce) * speed * Time.deltaTime);
 
-        Energy += (int)Time.deltaTime;
+        Energy += (int)(energyRecoverySpeed*Time.deltaTime);
     }
 
     IEnumerator Dash()
@@ -106,6 +107,12 @@ public class Player : MonoBehaviour {
             Energy -= 2;
             yield return null;
         }
+        while (nowdashCoolTime > 0)
+        {
+            nowdashCoolTime -= Time.deltaTime;
+            yield return null;
+        }
+        nowdashCoolTime = maxDashCoolTimeLimit;
         canDash = true;
         
         yield break;
