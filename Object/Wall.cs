@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Wall : MonoBehaviour {
+    public int touchingPlayerSetHP = 20;
     [Header("랜덤스폰 포지션 최소값 X")]
     public float x_MinSpownReach = -300;
     [Header("랜덤스폰 포지션 최대값 X")]
@@ -23,6 +24,8 @@ public class Wall : MonoBehaviour {
             Vector3 Pos_RandomSpown = new Vector3(RandomPos_x, 10, RandomPos_z);
 
             collision.gameObject.transform.position = Pos_RandomSpown;
+            GameManager.Instance.player.Hp = touchingPlayerSetHP;
+            Debug.Log(GameManager.Instance.player.Hp);
         }
     }
 

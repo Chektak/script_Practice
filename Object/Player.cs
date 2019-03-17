@@ -39,36 +39,37 @@ public class Player : MonoBehaviour {
     [HideInInspector]
     public int hp=100;
 
-    public float dashTime = 0.2f;
+    public float dashDuration = 0.2f;
     public float dashSpeed = 4f;
-    public float maxDashCoolTimeLimit = 1f;
-    public float NowDashCoolTime
+    public float energyRecoverySpeed = 1;//기력 재생 빠르기
+    public int maxEnergyLimit = 100;
+    public int Energy
     {
         get
         {
-            return nowDashCoolTime;
+            return energy;
         }
         set
         {
-            nowDashCoolTime = value;
-            GameManager.Instance.gamePanel.CoolBarUpdate(nowDashCoolTime);
-            if (nowDashCoolTime > maxDashCoolTimeLimit)
-                nowDashCoolTime = maxDashCoolTimeLimit;
+            energy = value;
+            GameManager.Instance.gamePanel.CoolBarUpdate(energy);
+            if (energy > maxEnergyLimit)
+                energy = maxEnergyLimit;
         }
     }
-    [HideInInspector]
-    public float nowDashCoolTime = 1f;
+    private int energy = 100;
+
     [HideInInspector]
     public bool isDie=false;
     [HideInInspector]
     public bool canDash = true;
 
-    float zAxisforce = 0;
-    float xAxisforce = 0;
     private void Start()
     {
         GameManager.Instance.gamePanel.HpBarUpdate(hp);
     }
+    float zAxisforce = 0;
+    float xAxisforce = 0;
     // Update is called once per frame
     void FixedUpdate () {
         if (isDie == true)
@@ -81,7 +82,6 @@ public class Player : MonoBehaviour {
 
         if (Input.GetKeyUp(KeyCode.LeftShift) && canDash == true)
         {
-            canDash = false;
             StartCoroutine(Dash());
         }
         if (Input.GetKeyDown(KeyCode.Space))
@@ -91,26 +91,21 @@ public class Player : MonoBehaviour {
         if (!(Input.GetKey(KeyCode.LeftAlt)))
             transform.rotation = GameManager.Instance.mainCamera.transform.rotation;
         transform.Translate(new Vector3(xAxisforce, 0, zAxisforce) * speed * Time.deltaTime);
-        
-        if(transform.position.y<-5)
-            transform.position=GameManager.Instance.playerSpawn.transform.position + new Vector3(0, 8, 0);
+
+        Energy += (int)Time.deltaTime;
     }
 
     IEnumerator Dash()
     {
-        float nowDashTime = dashTime;
-        while (NowDashCoolTime > 0)
+        canDash = false;
+        float nowDashTime = dashDuration;
+        while (Energy > 0&& nowDashTime>0)
         {
-            
-            if (nowDashTime > 0)
-            {
-                nowDashTime -= Time.deltaTime;
-                transform.Translate(Vector3.forward * dashSpeed);
-            }
-            NowDashCoolTime -= Time.deltaTime;
+            nowDashTime -= Time.deltaTime;
+            transform.Translate(Vector3.forward * dashSpeed);
+            Energy -= 2;
             yield return null;
         }
-        NowDashCoolTime = maxDashCoolTimeLimit;
         canDash = true;
         
         yield break;

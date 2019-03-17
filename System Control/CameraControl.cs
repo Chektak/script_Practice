@@ -148,6 +148,11 @@ public class CameraControl : MonoBehaviour {
         yield return null;
         yield return null;
         yield return null;
+        yield return null;
+        yield return null;
+        yield return null;
+        yield return null;
+        yield return null;
         GameManager.Instance.gamePanel.panel_Healing.SetActive(false);
         yield break;
     }

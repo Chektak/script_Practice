@@ -17,6 +17,10 @@ public class Tsunami : MonoBehaviour {
     void Start () {
         Reset_RunningWater();
         StartCoroutine(Resetting_RunningWater());
+        foreach(Tsunami_StandingWater standingWater in standingWaters)
+        {
+            standingWater.gameObject.SetActive(true);
+        }
 	}
 
     private void Reset_RunningWater()
@@ -29,11 +33,11 @@ public class Tsunami : MonoBehaviour {
 
     IEnumerator Resetting_RunningWater()
     {
-        while (runningWater.gameObject.activeSelf==true)
-        {
+        while (gameObject.activeSelf==true){
+            if(runningWater.gameObject.activeSelf == false)
+                Reset_RunningWater();
             yield return null;
         }
-        Reset_RunningWater();
         yield break;
     }
 }
